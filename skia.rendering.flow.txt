@@ -1,0 +1,8 @@
+skia rendering flow:
+1. create native window
+2. create gl context
+3. make current
+4. create gr context
+5. desc render target
+6. create sk surface
+7. get sk canvas
