@@ -1,0 +1,6 @@
+Source Insight 4.0延长试用期的方法
+
+卸载si4.0
+删掉C:\ProgramData\Source Insight\4.0\si4.lic
+删掉HKEY_CURRENT_USER\Software\Source Dynamics
+安装si4.0
