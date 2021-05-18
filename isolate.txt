@@ -1,0 +1,15 @@
+DartIsolateScope
+
+
+std::function<std::function<void(void)>>
+  message_handler().Initialize(
+      [runner](std::function<void()> task) { runner->PostTask(task); });
+
+
+std::weak_ptr<DartState> dart_state_;
+auto dart_state = dart_state_.lock();
+DartIsolateScope scope(dart_state->isolate());
+
+
+3       breakpoint     keep y   0x00007ffff7c9e9a8 in flutter::DartIsolate::Initialize(_Dart_Isolate*) at ../../flutter/runtime/dart_isolate.cc:360
+4       breakpoint     keep y   0x00007ffff7cd0a12 in flutter::RuntimeController::LaunchRootIsolate(flutter::Settings const&, std::__1::optional<std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > >, std::__1::optional<std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > >, std::__1::unique_ptr<flutter::IsolateConfiguration, std::__1::default_delete<flutter::IsolateConfiguration> >) at ../../flutter/runtime/runtime_controller.cc:392
