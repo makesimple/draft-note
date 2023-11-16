@@ -1,7 +1,12 @@
 1. download android-ndk-r26b and extract it
 2. adb push lldb-server system/bin
 3. adb forward tcp:20000 tcp:20000
-4. adb shell;lldb-server platform --listen *:20000
-5. lldb;target create /system/bin/gs_server;platform select remote-android;platform connect connect://localhost:20000;platform settings -w /system/bin
+4. adb shell
+    lldb-server platform --listen *:20000
+5. lldb;
+    platform select remote-android
+    platform connect connect://localhost:20000
+    platform settings -w /system/bin
+    target create /system/bin/gs_server -S sysroot-dir
 6. r
 
