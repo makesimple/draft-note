@@ -2,6 +2,6 @@
 2. adb push lldb-server system/bin
 3. adb forward tcp:20000 tcp:20000
 4. adb shell;lldb-server platform --listen *:20000
-5. lldb;target create /mnt/work/qcom/android/qssi/out/target/product/qssi/system/bin/gs_server;platform select remote-android;platform connect connect://localhost:20000
+5. lldb;target create /system/bin/gs_server;platform select remote-android;platform connect connect://localhost:20000;platform settings -w /system/bin
 6. r
 
