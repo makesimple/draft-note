@@ -8,5 +8,7 @@
     platform connect connect://localhost:20000
     platform settings -w /system/bin
     target create /system/bin/gs_server -S sysroot-dir
+    settings append target.source-map '/b/f/w' '~/workspace/qcom_build'
+    settings append target.source-map '' '~/workspace/qcom_build'
 6. r
 
