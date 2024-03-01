@@ -18,6 +18,10 @@ gdb ../gles-streaming/thirdparty/glfw/out/examples/triangle-opengles
 
 
 
+
+
 optional:
 export LIBGL_DRIVERS_PATH=/home/zzb/workspace/mesa/out/lib/x86_64-linux-gnu/dri:/usr/lib/x86_64-linux-gnu/dri
 export LIBGL_ALWAYS_SOFTWARE=1
+
+if libdrm version is low ,don't build mesa drm, clone libdrm and build
