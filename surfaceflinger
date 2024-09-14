@@ -1,7 +1,7 @@
 1. VsyncPredictor 通过不断输入fence timestamp，偶尔resample hw vsync来维持一个数学模型，用来产生sw vsync，减少hw sync的依赖，提高性能。
 2. VsyncModulator 是一个vsync phase 偏移的调整器，默认为Late，通过setTransactionSchedule来启动一个Early（只维持2帧，MIN_EARLY_TRANSACTION_FRAMES）,然后通过onXXX序列函数来更新状态，能过onDisplayRefresh消除Early回到Late，每次调用onXXX都会更新相应的变量，再调用updateVsyncConfig（返回VsyncConfig）
   。这类负责通过接口来更新状态，向提供offset状态。主要是三个函数，先设置Early和early frame数:setTransactionSchedule,再onTransactionCommit调协Late,再调用onDisplayRefresh消除early frame。
-3. 
+3. 注册了一个display,对每个connection中的EventThread都进行onNewVsyncSchedule， EventThread拥有一个displayId。
   Scheduler::applyNewVsyncSchedule
   	MessageQueue::onNewVsyncSchedule
   		MessageQueue::onNewVsyncScheduleLocked
