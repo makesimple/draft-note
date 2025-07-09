@@ -1,0 +1,52 @@
+1. context继承关系GrDirectContext：GrRecordingContext：GrImageContext：GrContext_Base
+GrRecordingContext是可以在其它的线程执行，GrDirectContext只能在renderthread线程中执行，这个结论需要论证。
+2. GrRecordingContext中有一个GrDrawingManager的成员fDrawingManager
+3. GrDrawingManager中有fDAG，保存SkCanvas的cmd
+4. SkCanvas中有fDevice，SkDevice中有fSurfaceDrawContext。
+5. 继承关系：SurfaceDrawContext：SurfaceFillContext : SurfaceContext，在SurfaceContext中有GrRecordingContext* fContext;从而可以获取fDrawingManager
+6.只是把cmd保存到OpsTask : public GrRenderTask中，如何关联到fDrawingManager.fDAG呢？而skia_private::TArray<sk_sp<GrRenderTask>>  fDAG;类型是相同的，这两个数据是如何同步的呢？请看下面的调用关系。
+SurfaceDrawContext::drawRect--->SurfaceDrawContext::addDrawOp--->getOpsTask
+  OpsTask* SurfaceFillContext::getOpsTask() {
+    ASSERT_SINGLE_OWNER
+    SkDEBUGCODE(this->validate();)
+
+    if (!fOpsTask || fOpsTask->isClosed()) {
+        this->replaceOpsTask();
+    }
+    SkASSERT(!fOpsTask->isClosed());
+    return fOpsTask.get();
+}
+
+OpsTask* SurfaceFillContext::replaceOpsTask() {
+    sk_sp<OpsTask> newOpsTask = this->drawingManager()->newOpsTask(this->writeSurfaceView(),
+                                                                   this->arenas());
+    this->willReplaceOpsTask(fOpsTask.get(), newOpsTask.get());
+    fOpsTask = std::move(newOpsTask);
+    return fOpsTask.get();
+}
+
+sk_sp<skgpu::ganesh::OpsTask> GrDrawingManager::newOpsTask(GrSurfaceProxyView surfaceView,
+                                                           sk_sp<GrArenas> arenas) {
+    SkDEBUGCODE(this->validate());
+    SkASSERT(fContext);
+
+    this->closeActiveOpsTask();
+
+    sk_sp<skgpu::ganesh::OpsTask> opsTask(new skgpu::ganesh::OpsTask(
+            this, std::move(surfaceView), fContext->priv().auditTrail(), std::move(arenas)));
+
+    SkASSERT(this->getLastRenderTask(opsTask->target(0)) == opsTask.get());
+
+    this->appendTask(opsTask);
+
+    fActiveOpsTask = opsTask.get();
+
+    SkDEBUGCODE(this->validate());
+    return opsTask;
+}
+
+从上面可以看出，opsTask是从GrDrawingManager::newOpsTask中创建，保存在fDAG中，然后返回给SurfaceDrawContext的。
+
+
+
+https://blog.csdn.net/j383575602/article/details/132436346
