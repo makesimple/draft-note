@@ -1,0 +1,9 @@
+1. GrTexture是GrSurface的子类：GrTexture： GrSurface : GrGpuResource ，感官上可能以为surface是texture的子类。GrRenderTarget也是GrSurface的子类，创建这些对象最后的主要流程是创建纹理。
+2. surface跟其它那些类的关系是什么样的？
+  SkSurface
+    new SkDevice
+      new SurfaceDrawContext
+        new GrTextureProxy
+          new GrTextureRenderTargetProxy
+            new GrSurface
+              通过resource provider来创建texture,进入纹理创建的路径
